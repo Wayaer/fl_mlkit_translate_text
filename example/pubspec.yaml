@@ -13,7 +13,7 @@ dependencies:
     path: ../
   cupertino_icons: ^1.0.4
   flutter_curiosity: ^3.3.2
-  flutter_waya: ^1.15.7
+  flutter_waya: ^1.15.10
 
 dev_dependencies:
   flutter_test:
