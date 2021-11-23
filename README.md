@@ -4,3 +4,31 @@
 
 Google mlkit translate text for flutter plugin , supports Android and IOS.
 
+```dart
+
+void func() {
+  FlMlkitTranslateText translate = FlMlkitTranslateText();
+
+  /// translation
+  translate.translate('');
+
+  /// Switching translation languages
+  translate.switchLanguage(translateText.sourceLanguage, translateText.targetLanguage);
+
+  /// Get downloaded models
+  translate.getDownloadedModels();
+
+  /// Downloaded model
+  translate.downloadedModel(TranslateLanguage.english);
+
+  /// Delete downloaded model
+  translate.deleteDownloadedModel(TranslateLanguage.english);
+
+  /// Whether downloaded model
+  translate.isModelDownloaded(TranslateLanguage.english);
+
+  /// Be sure to call this method when you no longer use translation
+  translate.dispose();
+}
+
+```

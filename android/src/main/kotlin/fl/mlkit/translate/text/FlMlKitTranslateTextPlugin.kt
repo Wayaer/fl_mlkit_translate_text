@@ -1,11 +1,8 @@
 package fl.mlkit.translate.text
 
-import android.util.Log
-import androidx.annotation.MainThread
 import androidx.annotation.NonNull
 import com.google.mlkit.common.model.DownloadConditions
 import com.google.mlkit.common.model.RemoteModelManager
-import com.google.mlkit.common.sdkinternal.ModelType
 import com.google.mlkit.nl.translate.*
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -13,7 +10,6 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import java.util.logging.Handler
 
 /** FlMlKitTranslateTextPlugin */
 class FlMlKitTranslateTextPlugin : FlutterPlugin, MethodCallHandler {
@@ -166,7 +162,7 @@ class FlMlKitTranslateTextPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun getTranslation(): Translator {
         if (translator == null) {
-            translator = Translation.getClient(getTranslatorOptions());
+            translator = Translation.getClient(getTranslatorOptions())
         }
         return translator!!
     }

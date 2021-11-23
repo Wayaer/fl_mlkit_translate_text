@@ -21,6 +21,7 @@ class FlMlkitTranslateText {
 
   /// translation
   Future<TranslateTextModel?> translate(String text) async {
+    if (text.isEmpty) return null;
     final Map<dynamic, dynamic>? map =
         await _channel.invokeMapMethod<dynamic, dynamic>('translate', text);
     if (map != null) return TranslateTextModel.fromMap(map);
@@ -72,7 +73,7 @@ class FlMlkitTranslateText {
     return state ?? false;
   }
 
-  /// Has downloaded model
+  /// Whether downloaded model
   Future<bool> isModelDownloaded(TranslateLanguage language) async {
     final bool? state = await _channel.invokeMethod(
         'isModelDownloaded', toAbbreviations(language));
@@ -353,13 +354,15 @@ class TranslateRemoteModel {
       : language = FlMlkitTranslateText()
             .toTranslateLanguage(data['language'] as String),
         modelType = _toTranslateRemoteModelType(data['modelType'] as String?),
-        modelName = data['modelName'] as String?,
         isBaseModel = data['isBaseModel'] as bool?;
 
   late TranslateLanguage language;
+
+  /// Null on ios
   bool? isBaseModel;
+
+  /// Null on ios
   TranslateRemoteModelType? modelType;
-  String? modelName;
 }
 
 TranslateRemoteModelType _toTranslateRemoteModelType(String? type) {
