@@ -1,6 +1,6 @@
 name: fl_mlkit_translate_text
 description: Google mlkit translate text for flutter plugin , supports Android and IOS.
-version: 0.1.0
+version: 0.1.1
 repository: https://github.com/Wayaer/fl_mlkit_translate_text.git
 
 environment:

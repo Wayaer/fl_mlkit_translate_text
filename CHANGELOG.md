@@ -1,4 +1,4 @@
-## 0.1.0
+## 0.1.1
  * Optimize some methods
  * Add some parameters
 ## 0.0.2
