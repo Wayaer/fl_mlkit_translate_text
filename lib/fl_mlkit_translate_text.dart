@@ -20,12 +20,11 @@ class FlMlkitTranslateText {
   TranslateLanguage get targetLanguage => _targetLanguage;
 
   /// translation
-  Future<TranslateTextModel?> translate(String text) async {
+  Future<String?> translate(String text,
+      {bool downloadModelIfNeeded = false}) async {
     if (text.isEmpty) return null;
-    final Map<dynamic, dynamic>? map =
-        await _channel.invokeMapMethod<dynamic, dynamic>('translate', text);
-    if (map != null) return TranslateTextModel.fromMap(map);
-    return null;
+    return await _channel.invokeMethod<String?>('translate',
+        {'text': text, 'downloadModelIfNeeded': downloadModelIfNeeded});
   }
 
   /// Switching translation languages
@@ -46,17 +45,19 @@ class FlMlkitTranslateText {
     final Map<dynamic, dynamic>? map =
         await _channel.invokeMapMethod('getCurrentLanguage');
     if (map != null) {
-      _sourceLanguage = toTranslateLanguage(map['source']);
-      _targetLanguage = toTranslateLanguage(map['target']);
+      _sourceLanguage = toTranslateLanguage(map['source'])!;
+      _targetLanguage = toTranslateLanguage(map['target'])!;
     }
   }
 
   /// Get downloaded models
   Future<List<TranslateRemoteModel>> getDownloadedModels() async {
-    final Map<dynamic, dynamic>? map =
-        await _channel.invokeMapMethod('getDownloadedModels');
-    if (map != null) return TranslateRemoteModels.fromMap(map).models;
-    return [];
+    final List<dynamic>? list =
+        await _channel.invokeListMethod('getDownloadedModels');
+    return list != null
+        ? List<TranslateRemoteModel>.unmodifiable(
+            list.map<dynamic>((dynamic e) => TranslateRemoteModel.fromMap(e)))
+        : [];
   }
 
   /// Downloaded model
@@ -86,282 +87,108 @@ class FlMlkitTranslateText {
     return state ?? false;
   }
 
+  /// Convert to Abbreviations
   String toAbbreviations(TranslateLanguage language) {
-    switch (language) {
-      case TranslateLanguage.afrikaans:
-        return 'af';
-      case TranslateLanguage.albanian:
-        return 'sq';
-      case TranslateLanguage.arabic:
-        return 'ar';
-      case TranslateLanguage.belarusian:
-        return 'be';
-      case TranslateLanguage.bulgarian:
-        return 'bg';
-      case TranslateLanguage.bengali:
-        return 'bn';
-      case TranslateLanguage.catalan:
-        return 'ca';
-      case TranslateLanguage.chinese:
-        return 'zh';
-      case TranslateLanguage.croatian:
-        return 'hr';
-      case TranslateLanguage.czech:
-        return 'cs';
-      case TranslateLanguage.danish:
-        return 'da';
-      case TranslateLanguage.dutch:
-        return 'nl';
-      case TranslateLanguage.english:
-        return 'en';
-      case TranslateLanguage.esperanto:
-        return 'eo';
-      case TranslateLanguage.estonian:
-        return 'et';
-      case TranslateLanguage.finnish:
-        return 'fi';
-      case TranslateLanguage.french:
-        return 'fr';
-      case TranslateLanguage.galician:
-        return 'gl';
-      case TranslateLanguage.georgian:
-        return 'ka';
-      case TranslateLanguage.german:
-        return 'de';
-      case TranslateLanguage.greek:
-        return 'el';
-      case TranslateLanguage.gujarati:
-        return 'gu';
-      case TranslateLanguage.haitianCreole:
-        return 'ht';
-      case TranslateLanguage.hebrew:
-        return 'he';
-      case TranslateLanguage.hindi:
-        return 'hi';
-      case TranslateLanguage.hungarian:
-        return 'hu';
-      case TranslateLanguage.icelandic:
-        return 'is';
-      case TranslateLanguage.indonesian:
-        return 'id';
-      case TranslateLanguage.irish:
-        return 'ga';
-      case TranslateLanguage.italian:
-        return 'it';
-      case TranslateLanguage.japanese:
-        return 'ja';
-      case TranslateLanguage.kannada:
-        return 'kn';
-      case TranslateLanguage.korean:
-        return 'ko';
-      case TranslateLanguage.lithuanian:
-        return 'lt';
-      case TranslateLanguage.latvian:
-        return 'lv';
-      case TranslateLanguage.macedonian:
-        return 'mk';
-      case TranslateLanguage.marathi:
-        return 'mr';
-      case TranslateLanguage.malay:
-        return 'ms';
-      case TranslateLanguage.maltese:
-        return 'mt';
-      case TranslateLanguage.norwegian:
-        return 'no';
-      case TranslateLanguage.persian:
-        return 'fa';
-      case TranslateLanguage.polish:
-        return 'pl';
-      case TranslateLanguage.portuguese:
-        return 'pt';
-      case TranslateLanguage.romanian:
-        return 'ro';
-      case TranslateLanguage.russian:
-        return 'ru';
-      case TranslateLanguage.slovak:
-        return 'sk';
-      case TranslateLanguage.slovenian:
-        return 'sl';
-      case TranslateLanguage.spanish:
-        return 'es';
-      case TranslateLanguage.swedish:
-        return 'sv';
-      case TranslateLanguage.swahili:
-        return 'sw';
-      case TranslateLanguage.tagalog:
-        return 'tl';
-      case TranslateLanguage.tamil:
-        return 'ta';
-      case TranslateLanguage.telugu:
-        return 'te';
-      case TranslateLanguage.thai:
-        return 'th';
-      case TranslateLanguage.turkish:
-        return 'tr';
-      case TranslateLanguage.ukrainian:
-        return 'uk';
-      case TranslateLanguage.urdu:
-        return 'ur';
-      case TranslateLanguage.vietnamese:
-        return 'vi';
-      case TranslateLanguage.welsh:
-        return 'cy';
+    late String abbreviations;
+    for (int i = 0; i < allLanguage.length; i++) {
+      var element = allLanguage.values.elementAt(i);
+      if (element == language) {
+        abbreviations = allLanguage.keys.elementAt(i);
+        break;
+      }
     }
+    return abbreviations;
   }
 
-  TranslateLanguage toTranslateLanguage(String language) {
-    switch (language) {
-      case 'af':
-        return TranslateLanguage.afrikaans;
-      case 'sq':
-        return TranslateLanguage.albanian;
-      case 'ar':
-        return TranslateLanguage.arabic;
-      case 'be':
-        return TranslateLanguage.belarusian;
-      case 'bg':
-        return TranslateLanguage.bulgarian;
-      case 'bn':
-        return TranslateLanguage.bengali;
-      case 'ca':
-        return TranslateLanguage.catalan;
-      case 'zh':
-        return TranslateLanguage.chinese;
-      case 'hr':
-        return TranslateLanguage.croatian;
-      case 'cs':
-        return TranslateLanguage.czech;
-      case 'da':
-        return TranslateLanguage.danish;
-      case 'nl':
-        return TranslateLanguage.dutch;
-      case 'en':
-        return TranslateLanguage.english;
-      case 'eo':
-        return TranslateLanguage.esperanto;
-      case 'et':
-        return TranslateLanguage.estonian;
-      case 'fi':
-        return TranslateLanguage.finnish;
-      case 'fr':
-        return TranslateLanguage.french;
-      case 'gl':
-        return TranslateLanguage.galician;
-      case 'ka':
-        return TranslateLanguage.georgian;
-      case 'de':
-        return TranslateLanguage.german;
-      case 'el':
-        return TranslateLanguage.greek;
-      case 'gu':
-        return TranslateLanguage.gujarati;
-      case 'ht':
-        return TranslateLanguage.haitianCreole;
-      case 'he':
-        return TranslateLanguage.hebrew;
-      case 'hi':
-        return TranslateLanguage.hindi;
-      case 'hu':
-        return TranslateLanguage.hungarian;
-      case 'is':
-        return TranslateLanguage.icelandic;
-      case 'id':
-        return TranslateLanguage.indonesian;
-      case 'ga':
-        return TranslateLanguage.irish;
-      case 'it':
-        return TranslateLanguage.italian;
-      case 'ja':
-        return TranslateLanguage.japanese;
-      case 'kn':
-        return TranslateLanguage.kannada;
-      case 'ko':
-        return TranslateLanguage.korean;
-      case 'lt':
-        return TranslateLanguage.lithuanian;
-      case 'lv':
-        return TranslateLanguage.latvian;
-      case 'mk':
-        return TranslateLanguage.macedonian;
-      case 'mr':
-        return TranslateLanguage.marathi;
-      case 'ms':
-        return TranslateLanguage.malay;
-      case 'mt':
-        return TranslateLanguage.maltese;
-      case 'no':
-        return TranslateLanguage.norwegian;
-      case 'fa':
-        return TranslateLanguage.persian;
-      case 'pl':
-        return TranslateLanguage.polish;
-      case 'pt':
-        return TranslateLanguage.portuguese;
-      case 'ro':
-        return TranslateLanguage.romanian;
-      case 'ru':
-        return TranslateLanguage.russian;
-      case 'sk':
-        return TranslateLanguage.slovak;
-      case 'sl':
-        return TranslateLanguage.slovenian;
-      case 'es':
-        return TranslateLanguage.spanish;
-      case 'sv':
-        return TranslateLanguage.swedish;
-      case 'sw':
-        return TranslateLanguage.swahili;
-      case 'tl':
-        return TranslateLanguage.tagalog;
-      case 'ta':
-        return TranslateLanguage.tamil;
-      case 'te':
-        return TranslateLanguage.telugu;
-      case 'th':
-        return TranslateLanguage.thai;
-      case 'tr':
-        return TranslateLanguage.turkish;
-      case 'uk':
-        return TranslateLanguage.ukrainian;
-      case 'ur':
-        return TranslateLanguage.urdu;
-      case 'vi':
-        return TranslateLanguage.vietnamese;
-      case 'cy':
-        return TranslateLanguage.welsh;
+  /// Convert to TranslateLanguage enum
+  TranslateLanguage? toTranslateLanguage(String language) {
+    TranslateLanguage? translateLanguage;
+    for (var element in allLanguage.keys) {
+      if (element == language) {
+        translateLanguage = allLanguage[element]!;
+        break;
+      }
     }
-    return TranslateLanguage.english;
+    return translateLanguage;
   }
+
+  Map<String, TranslateLanguage> get allLanguage => {
+        'af': TranslateLanguage.afrikaans,
+        'sq': TranslateLanguage.albanian,
+        'ar': TranslateLanguage.arabic,
+        'be': TranslateLanguage.belarusian,
+        'bg': TranslateLanguage.bulgarian,
+        'bn': TranslateLanguage.bengali,
+        'ca': TranslateLanguage.catalan,
+        'zh': TranslateLanguage.chinese,
+        'hr': TranslateLanguage.croatian,
+        'cs': TranslateLanguage.czech,
+        'da': TranslateLanguage.danish,
+        'nl': TranslateLanguage.dutch,
+        'en': TranslateLanguage.english,
+        'eo': TranslateLanguage.esperanto,
+        'et': TranslateLanguage.estonian,
+        'fi': TranslateLanguage.finnish,
+        'fr': TranslateLanguage.french,
+        'gl': TranslateLanguage.galician,
+        'ka': TranslateLanguage.georgian,
+        'de': TranslateLanguage.german,
+        'el': TranslateLanguage.greek,
+        'gu': TranslateLanguage.gujarati,
+        'ht': TranslateLanguage.haitianCreole,
+        'he': TranslateLanguage.hebrew,
+        'hi': TranslateLanguage.hindi,
+        'hu': TranslateLanguage.hungarian,
+        'is': TranslateLanguage.icelandic,
+        'id': TranslateLanguage.indonesian,
+        'ga': TranslateLanguage.irish,
+        'it': TranslateLanguage.italian,
+        'ja': TranslateLanguage.japanese,
+        'kn': TranslateLanguage.kannada,
+        'ko': TranslateLanguage.korean,
+        'lt': TranslateLanguage.lithuanian,
+        'lv': TranslateLanguage.latvian,
+        'mk': TranslateLanguage.macedonian,
+        'mr': TranslateLanguage.marathi,
+        'ms': TranslateLanguage.malay,
+        'mt': TranslateLanguage.maltese,
+        'no': TranslateLanguage.norwegian,
+        'fa': TranslateLanguage.persian,
+        'pl': TranslateLanguage.polish,
+        'pt': TranslateLanguage.portuguese,
+        'ro': TranslateLanguage.romanian,
+        'ru': TranslateLanguage.russian,
+        'sk': TranslateLanguage.slovak,
+        'sl': TranslateLanguage.slovenian,
+        'es': TranslateLanguage.spanish,
+        'sv': TranslateLanguage.swedish,
+        'sw': TranslateLanguage.swahili,
+        'tl': TranslateLanguage.tagalog,
+        'ta': TranslateLanguage.tamil,
+        'te': TranslateLanguage.telugu,
+        'th': TranslateLanguage.thai,
+        'tr': TranslateLanguage.turkish,
+        'uk': TranslateLanguage.ukrainian,
+        'ur': TranslateLanguage.urdu,
+        'vi': TranslateLanguage.vietnamese,
+        'cy': TranslateLanguage.welsh,
+      };
 }
-
-class TranslateRemoteModels {
-  TranslateRemoteModels.fromMap(Map<dynamic, dynamic> data)
-      : success = data['success'] as bool,
-        models = _getTranslateRemoteModel(data['models'] as List<dynamic>?);
-
-  late bool success;
-  late List<TranslateRemoteModel> models;
-}
-
-List<TranslateRemoteModel> _getTranslateRemoteModel(List<dynamic>? data) =>
-    data != null
-        ? List<TranslateRemoteModel>.unmodifiable(
-            data.map<dynamic>((dynamic e) => TranslateRemoteModel.fromMap(e)))
-        : [];
 
 class TranslateRemoteModel {
   TranslateRemoteModel.fromMap(Map<dynamic, dynamic> data)
       : language = FlMlkitTranslateText()
-            .toTranslateLanguage(data['language'] as String),
+            .toTranslateLanguage(data['language'] as String)!,
         modelType = _toTranslateRemoteModelType(data['modelType'] as String?),
         isBaseModel = data['isBaseModel'] as bool?;
 
+  ///
   late TranslateLanguage language;
 
-  /// Null on ios
+  /// Null on Android
   bool? isBaseModel;
 
-  /// Null on ios
+  /// Null on Android
   TranslateRemoteModelType? modelType;
 }
 
@@ -385,6 +212,7 @@ TranslateRemoteModelType _toTranslateRemoteModelType(String? type) {
   return TranslateRemoteModelType.unknown;
 }
 
+/// Android TranslateRemoteModel Type
 enum TranslateRemoteModelType {
   unknown,
   base,
@@ -395,15 +223,7 @@ enum TranslateRemoteModelType {
   digitalink,
 }
 
-class TranslateTextModel {
-  TranslateTextModel.fromMap(Map<dynamic, dynamic> data)
-      : text = data['text'] as String?,
-        success = data['success'] as bool;
-
-  late bool success;
-  late String? text;
-}
-
+/// Translate Language
 enum TranslateLanguage {
   afrikaans,
   albanian,

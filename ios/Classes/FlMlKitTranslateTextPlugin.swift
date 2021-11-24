@@ -23,27 +23,22 @@ public class FlMlKitTranslateTextPlugin: NSObject, FlutterPlugin {
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
         case "translate":
-            let text = call.arguments as! String
-            getTranslation().downloadModelIfNeeded(with: getConditions()) { error in
-                if error == nil {
-                    self.getTranslation().translate(text) { translatedText, error in
-                        if translatedText != nil, error == nil {
-                            result([
-                                "success": true,
-                                "text": translatedText!
-                            ])
-                        } else {
-                            result([
-                                "success": true,
-                                "text": String(describing: error)
-                            ])
+            let arguments = call.arguments as! [String: Any?]
+            let text = arguments["text"] as! String
+            let downloadModelIfNeeded = arguments["downloadModelIfNeeded"] as! Bool
+            if downloadModelIfNeeded {
+                getTranslation().downloadModelIfNeeded(with: getConditions()) { error in
+                    if error == nil {
+                        self.getTranslation().translate(text) { translatedText, _ in
+                            result(translatedText)
                         }
+                    } else {
+                        result(nil)
                     }
-                } else {
-                    result([
-                        "success": true,
-                        "text": String(describing: error)
-                    ])
+                }
+            } else {
+                getTranslation().translate(text) { translatedText, _ in
+                    result(translatedText)
                 }
             }
         case "switchLanguage":
@@ -61,10 +56,7 @@ public class FlMlKitTranslateTextPlugin: NSObject, FlutterPlugin {
             ])
         case "getDownloadedModels":
             let localModels = getModelManager().downloadedTranslateModels
-            result([
-                "success": true,
-                "models": localModels.map { $0.data }
-            ])
+            result(localModels.map { $0.data })
         case "deleteDownloadedModel":
             getModelManager().deleteDownloadedModel(getTranslateRemoteModel(call)) { error in
                 result(error == nil)

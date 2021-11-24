@@ -32,28 +32,24 @@ class FlMlKitTranslateTextPlugin : FlutterPlugin, MethodCallHandler {
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         when (call.method) {
             "translate" -> {
-                val text = call.arguments as String
-                getTranslation().downloadModelIfNeeded(getConditions()).addOnSuccessListener {
-                    getTranslation().translate(text).addOnSuccessListener { translatedText ->
-                        val map = mapOf(
-                            "success" to true,
-                            "text" to translatedText
-                        )
-                        result.success(map)
-                    }.addOnFailureListener { exception ->
-                        val map = mapOf(
-                            "success" to false,
-                            "text" to exception.message
-                        )
-                        result.success(map)
+                val text = call.argument<String>("text")!!
+                val downloadModelIfNeeded = call.argument<Boolean>("downloadModelIfNeeded")!!
+                if (downloadModelIfNeeded) {
+                    getTranslation().downloadModelIfNeeded(getConditions()).addOnSuccessListener {
+                        getTranslation().translate(text).addOnSuccessListener { translatedText ->
+                            result.success(translatedText)
+                        }.addOnFailureListener {
+                            result.success(null)
+                        }
+                    }.addOnFailureListener {
+                        result.success(null)
                     }
-
-                }.addOnFailureListener { exception ->
-                    val map = mapOf(
-                        "success" to false,
-                        "text" to exception.message
-                    )
-                    result.success(map)
+                } else {
+                    getTranslation().translate(text).addOnSuccessListener { translatedText ->
+                        result.success(translatedText)
+                    }.addOnFailureListener {
+                        result.success(null)
+                    }
                 }
             }
             "switchLanguage" -> {
@@ -74,15 +70,10 @@ class FlMlKitTranslateTextPlugin : FlutterPlugin, MethodCallHandler {
             "getDownloadedModels" -> {
                 getModelManager().getDownloadedModels(TranslateRemoteModel::class.java)
                     .addOnSuccessListener { models ->
-                        val map = mapOf(
-                            "success" to true,
-                            "models" to models.map { model -> model.data }
-                        )
-                        result.success(map)
+                        result.success(models.map { model -> model.data })
                     }
                     .addOnFailureListener {
-                        val map = mapOf("success" to false)
-                        result.success(map)
+                        result.success(null)
                     }
             }
             "deleteDownloadedModel" -> {

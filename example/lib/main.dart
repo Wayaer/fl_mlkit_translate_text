@@ -158,8 +158,8 @@ class _AppState extends State<_App> {
     final hasTargetModel =
         await translateText.isModelDownloaded(translateText.targetLanguage);
     if (hasSourceModel && hasTargetModel) {
-      final model = await translateText.translate(controller.text);
-      if (model != null) text.value = model.text ?? '';
+      final value = await translateText.translate(controller.text);
+      if (value != null) text.value = value;
     } else {
       showToast('No download TranslateRemoteModel');
     }
