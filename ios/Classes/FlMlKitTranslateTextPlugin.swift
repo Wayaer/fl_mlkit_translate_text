@@ -91,7 +91,9 @@ public class FlMlKitTranslateTextPlugin: NSObject, FlutterPlugin {
     }
 
     private func dispose() {
-        removeObserver(self, forKeyPath: fractionCompletedKeyPath)
+        downloadProgress?.removeObserver(self, forKeyPath: fractionCompletedKeyPath)
+        downloadProgress = nil
+        _result = nil
         options = nil
         conditions = nil
         modelManager = nil
