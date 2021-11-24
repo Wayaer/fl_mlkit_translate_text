@@ -33,6 +33,6 @@ void func() {
 
 ```
 | --- | --- |
-| <img src="https://github.com/Wayaer/fl_mlkit_translate_text/raw/main/res/translate.png" width="49%">
-| <img src="https://github.com/Wayaer/fl_mlkit_translate_text/raw/main/res/manager.png" width="49%">
+| <img src="https://github.com/Wayaer/fl_mlkit_translate_text/raw/main/res/translate.png" style="zoom:50%;">
+| <img src="https://github.com/Wayaer/fl_mlkit_translate_text/raw/main/res/manager.png" style="zoom:50%;">
 | 
