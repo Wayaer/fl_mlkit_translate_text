@@ -32,4 +32,4 @@ void func() {
 }
 
 ```
-<img src="https://github.com/Wayaer/fl_mlkit_translate_text/raw/main/res/translate.png" width="50%"><img src="https://github.com/Wayaer/fl_mlkit_translate_text/raw/main/res/manager.png" width="50%">
+<img src="https://github.com/Wayaer/fl_mlkit_translate_text/raw/main/res/translate.png" width="50%"> [] <img src="https://github.com/Wayaer/fl_mlkit_translate_text/raw/main/res/manager.png" width="50%">
