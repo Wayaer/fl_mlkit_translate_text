@@ -13,13 +13,16 @@ class FlMlkitTranslateText {
 
   TranslateLanguage _sourceLanguage = TranslateLanguage.english;
 
+  /// Source language
   TranslateLanguage get sourceLanguage => _sourceLanguage;
 
   TranslateLanguage _targetLanguage = TranslateLanguage.chinese;
 
+  /// Target language
   TranslateLanguage get targetLanguage => _targetLanguage;
 
   /// translation
+  /// [downloadModelIfNeeded] The model will be downloaded if needed
   Future<String?> translate(String text,
       {bool downloadModelIfNeeded = false}) async {
     if (text.isEmpty) return null;
@@ -182,7 +185,7 @@ class TranslateRemoteModel {
         modelType = _toTranslateRemoteModelType(data['modelType'] as String?),
         isBaseModel = data['isBaseModel'] as bool?;
 
-  ///
+  /// Translate language
   late TranslateLanguage language;
 
   /// Null on Android
