@@ -56,7 +56,9 @@ public class FlMlKitTranslateTextPlugin: NSObject, FlutterPlugin {
             ])
         case "getDownloadedModels":
             let localModels = getModelManager().downloadedTranslateModels
-            result(localModels.map { $0.data })
+            result(localModels.map {
+                $0.data
+            })
         case "deleteDownloadedModel":
             getModelManager().deleteDownloadedModel(getTranslateRemoteModel(call)) { error in
                 result(error == nil)
@@ -95,8 +97,8 @@ public class FlMlKitTranslateTextPlugin: NSObject, FlutterPlugin {
     private func getConditions() -> ModelDownloadConditions {
         if conditions == nil {
             conditions = ModelDownloadConditions(
-                allowsCellularAccess: false,
-                allowsBackgroundDownloading: true
+                    allowsCellularAccess: false,
+                    allowsBackgroundDownloading: true
             )
         }
         return conditions!
@@ -136,7 +138,7 @@ public class FlMlKitTranslateTextPlugin: NSObject, FlutterPlugin {
 
 extension TranslateRemoteModel {
     var data: [String: Any?] {
-        return [
+        [
             "language": language
         ]
     }
